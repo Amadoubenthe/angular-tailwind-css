@@ -1,21 +1,25 @@
 import { Component, OnInit, computed, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  quantity = signal<number>(0);
+  quantity = signal<number>(1);
+  qtyAvailable = signal<number[]>([1, 2, 3, 4, 5, 6]);
+
   ngOnInit(): void {
     this.withOutSignal();
     this.withSignal();
-    //effect(() => console.log('Change: ', this.quantity));
   }
+
+  qtyEffect = effect(() => console.log('Change Last: ', this.quantity()));
 
   withOutSignal() {
     let x = 5;
@@ -41,5 +45,9 @@ export class AppComponent implements OnInit {
 
     this.quantity.update((qty) => qty * 2);
     console.log('Quantity with update: ', this.quantity());
+  }
+
+  onQuantitySelected(qty: number) {
+    this.quantity.set(qty);
   }
 }
