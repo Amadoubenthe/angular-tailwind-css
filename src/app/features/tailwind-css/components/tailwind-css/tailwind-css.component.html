@@ -1,0 +1,14 @@
+<div class="main">
+  <h1 class="text-3xl underline decoration-red-700">Shopping cart</h1>
+  <select
+    [ngModel]="quantity()"
+    (change)="onQuantitySelected($any($event.target).value)"
+  >
+    <option disabled value="">--Select a quantity--</option>
+    @for (item of qtyAvailable(); track item) {
+    <option>{{ item }}</option>
+    }</select
+  ><br />
+  <button (click)="onSelected(5)">Select</button>
+  <h2>Title 2</h2>
+</div>
