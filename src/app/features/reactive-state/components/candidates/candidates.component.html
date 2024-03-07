@@ -1,1 +1,20 @@
-<p>candidates works!</p>
+<mat-card>
+  <mat-card-title> Candidats </mat-card-title>
+  @if (loading$ | async) {
+  <mat-spinner></mat-spinner>
+  }
+  <mat-nav-list>
+    @for (candidate of candidates$ | async; track $index) {
+    <a matListItemTitle mat-list-item [routerLink]="candidate.id.toString()">
+      <img
+        matListItemAvatar
+        [src]="candidate.imageUrl"
+        [alt]="candidate.lastName"
+      />
+      <h3 matListItemTitle>{{ candidate.firstName }}</h3>
+      <p matListItemLine>{{ candidate.job }} chez {{ candidate.company }}</p>
+    </a>
+
+    }
+  </mat-nav-list>
+</mat-card>
