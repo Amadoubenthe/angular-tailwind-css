@@ -35,6 +35,6 @@ export class CandidatesComponent implements OnInit {
 
   private initObservables(): void {
     this.loading$ = this.candidatesService.loading$;
-    this.candidates$ = this.candidatesService.candidate$;
+    this.candidates$ = this.candidatesService.candidates$;
   }
 }
