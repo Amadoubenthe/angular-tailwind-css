@@ -1,6 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, delay, map, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  delay,
+  map,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { Candidate } from '../models/candidate.model';
 import { environment } from '../../../../environments/environment.development';
 
@@ -9,7 +17,7 @@ import { environment } from '../../../../environments/environment.development';
 })
 export class CandidatesService {
   private _loading$ = new BehaviorSubject<boolean>(false);
-  private _candidates = new BehaviorSubject<Candidate[]>([]);
+  private _candidates$ = new BehaviorSubject<Candidate[]>([]);
   firstCall = true;
 
   constructor(private http: HttpClient) {}
@@ -23,7 +31,7 @@ export class CandidatesService {
   }
 
   get candidates$(): Observable<Candidate[]> {
-    return this._candidates.asObservable();
+    return this._candidates$.asObservable();
   }
 
   getCandidates(): void {
@@ -33,7 +41,7 @@ export class CandidatesService {
       .pipe(
         delay(1500), // Simulate a small delay
         tap((candidates) => {
-          this._candidates.next(candidates);
+          this._candidates$.next(candidates);
           this.setLoadingStatus(false);
           this.firstCall = false;
         })
@@ -45,10 +53,30 @@ export class CandidatesService {
     if (this.firstCall) {
       this.getCandidates(); // Make sure we have the full list of candidates before showing details for an individual candidate
     }
+
     return this.candidates$.pipe(
       map(
         (candidates) => candidates.filter((candidate) => candidate.id === id)[0]
       )
     );
+  }
+
+  deleteCandidate(id: number | string) {
+    this.setLoadingStatus(true);
+    this.http
+      .delete(`${environment.apiUrl}/candidates/${id}`)
+      .pipe(
+        delay(1000),
+        switchMap(() => this.candidates$),
+        take(1),
+        map((candidates) =>
+          candidates.filter((candidate) => candidate.id !== id)
+        ),
+        tap((candidates) => {
+          this._candidates$.next(candidates);
+          this.setLoadingStatus(false);
+        })
+      )
+      .subscribe();
   }
 }

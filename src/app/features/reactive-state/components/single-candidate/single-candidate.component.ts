@@ -2,7 +2,16 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CandidatesService } from '../../services/candidates.service';
-import { Observable, catchError, filter, map, of, switchMap } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  filter,
+  map,
+  of,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { Candidate } from '../../models/candidate.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -40,18 +49,8 @@ export class SingleCandidateComponent implements OnInit {
     this.loading$ = this.candidatesService.loading$;
   }
 
-  // this.candidate$ = this.route.params.pipe(
-  //     map(params => +params['id']),
-  //     filter(id => id !== undefined),
-  //     switchMap(id => this.candidatesService.getCandidateById(id)),
-  //     catchError(error => {
-  //         console.error('Erreur lors de la récupération du candidat', error);
-  //         return of(null);
-  //     })
-  // );
-
   onGoBack() {
-    throw new Error('Method not implemented.');
+    this.router.navigateByUrl('/reactive-state/candidates');
   }
 
   onHire() {
@@ -59,6 +58,14 @@ export class SingleCandidateComponent implements OnInit {
   }
 
   onRefuse() {
-    throw new Error('Method not implemented.');
+    this.candidate$
+      .pipe(
+        take(1),
+        tap((candidate) => {
+          this.candidatesService.deleteCandidate(candidate.id);
+          this.onGoBack();
+        })
+      )
+      .subscribe();
   }
 }
