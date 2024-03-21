@@ -29,8 +29,17 @@ export class CandidatesComponent implements OnInit {
   constructor(private candidatesService: CandidatesService) {}
 
   ngOnInit(): void {
+    this.jsTest();
     this.initObservables();
     this.candidatesService.getCandidates();
+  }
+
+  private jsTest() {
+    try {
+      Number(5).toPrecision(300);
+    } catch (e) {
+      console.log('There was an error');
+    }
   }
 
   private initObservables(): void {

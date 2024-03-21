@@ -10,6 +10,7 @@ import { environment } from '../../../../environments/environment.development';
 export class CandidatesService {
   private _loading$ = new BehaviorSubject<boolean>(false);
   private _candidates = new BehaviorSubject<Candidate[]>([]);
+  firstCall = true;
 
   constructor(private http: HttpClient) {}
 
@@ -34,12 +35,16 @@ export class CandidatesService {
         tap((candidates) => {
           this._candidates.next(candidates);
           this.setLoadingStatus(false);
+          this.firstCall = false;
         })
       )
       .subscribe();
   }
 
   getCandidateById(id: number): Observable<Candidate> {
+    if (this.firstCall) {
+      this.getCandidates(); // Make sure we have the full list of candidates before showing details for an individual candidate
+    }
     return this.candidates$.pipe(
       map(
         (candidates) => candidates.filter((candidate) => candidate.id === id)[0]
