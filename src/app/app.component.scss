@@ -1,0 +1,16 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid gray;
+  padding: 16px;
+
+  &__logo {
+    font-size: 2rem;
+  }
+
+  &__navigation {
+    display: flex;
+    gap: 16px;
+  }
+}
