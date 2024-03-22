@@ -19,5 +19,13 @@
 
   &__btn {
     margin-left: 10px;
+
+    &--edit {
+      color: green;
+    }
+
+    &--delete {
+      color: red;
+    }
   }
 }
